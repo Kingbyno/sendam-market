@@ -19,6 +19,9 @@ yarn-error.log*
 # env files
 .env*
 
+# Files with sensitive information
+REDIRECT_LOOP_FIX.md
+
 # vercel
 .vercel
 
