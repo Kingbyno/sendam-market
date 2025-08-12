@@ -42,24 +42,23 @@ export default async function MarketplacePage({
   }
 
   // Fetch all data in parallel with error handling
-  let itemsResult: { items: any[]; totalCount: number }
+  let itemsResult = { items: [], totalCount: 0 }
   let categories: any[] = []
   let banners: any[] = []
   let isDatabaseAvailable = true
   
   try {
-    [itemsResult, categories, banners] = await Promise.all([
+    const [itemsData, categoriesData, bannersData] = await Promise.all([
       searchItems(filters),
       getCategories(),
       getActiveBanners(),
     ])
+    itemsResult = itemsData
+    categories = categoriesData
+    banners = bannersData
   } catch (error) {
     console.error("Database connection error:", error)
     isDatabaseAvailable = false
-    // Return fallback data when database is not available
-    itemsResult = { items: [], totalCount: 0 }
-    categories = []
-    banners = []
   }
 
   const { items, totalCount: totalItems } = itemsResult
