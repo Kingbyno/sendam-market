@@ -9,6 +9,8 @@ import { PromotionalBanner } from "@/components/marketplace/promotional-banner"
 import { TopSellers } from "@/components/marketplace/top-sellers"
 import { CategoryGrid } from "@/components/marketplace/category-grid"
 import { FlashSales } from "@/components/marketplace/flash-sales"
+import { NoDatabaseFallback } from "@/components/marketplace/no-database-fallback"
+import { checkEnvironment } from "@/lib/utils/env-checker"
 // import { QuickActions } from "@/components/marketplace/quick-actions"
 
 const ITEMS_PER_PAGE = 12
@@ -18,6 +20,11 @@ export default async function MarketplacePage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
+  // Check environment variables for debugging
+  if (process.env.NODE_ENV === 'production') {
+    checkEnvironment()
+  }
+
   const filters = {
     query: typeof searchParams?.query === "string" ? searchParams.query : "",
     category: typeof searchParams?.category === "string" ? searchParams.category : "",
@@ -34,14 +41,33 @@ export default async function MarketplacePage({
     limit: ITEMS_PER_PAGE,
   }
 
-  // Fetch all data in parallel for performance
-  const [itemsResult, categories, banners] = await Promise.all([
-    searchItems(filters),
-    getCategories(),
-    getActiveBanners(),
-  ])
+  // Fetch all data in parallel with error handling
+  let itemsResult: { items: any[]; totalCount: number }
+  let categories: any[] = []
+  let banners: any[] = []
+  let isDatabaseAvailable = true
+  
+  try {
+    [itemsResult, categories, banners] = await Promise.all([
+      searchItems(filters),
+      getCategories(),
+      getActiveBanners(),
+    ])
+  } catch (error) {
+    console.error("Database connection error:", error)
+    isDatabaseAvailable = false
+    // Return fallback data when database is not available
+    itemsResult = { items: [], totalCount: 0 }
+    categories = []
+    banners = []
+  }
 
   const { items, totalCount: totalItems } = itemsResult
+
+  // Show fallback UI when database is not available
+  if (!isDatabaseAvailable) {
+    return <NoDatabaseFallback />
+  }
 
   // For MVP, flash sale items are the most recently discounted items
   const flashSaleItems = items
