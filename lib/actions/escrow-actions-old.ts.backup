@@ -1,0 +1,471 @@
+"use server"
+
+import { prisma } from "@/lib/prisma/client"
+import { revalidatePath } from "next/cache"
+import { getAuth } from "@/lib/auth/get-auth"
+
+export interface EscrowTransaction {
+  id: string
+  transaction_reference: string
+  item_id: string
+  buyer_id: string
+  seller_id: string
+  amount: number
+  service_fee: number
+  total_amount: number
+  delivery_option: "sendam" | "direct"
+  status: "pending" | "paid" | "delivered" | "confirmed" | "released" | "disputed" | "refunded"
+  payment_method?: string
+  paystack_reference?: string
+  paid_at?: string
+  delivered_at?: string
+  confirmation_deadline?: string
+  auto_release_at?: string
+  released_at?: string
+  dispute_reason?: string
+  disputed_at?: string
+  dispute_resolved_at?: string
+  dispute_resolution?: string
+  admin_notes?: string
+  admin_action_by?: string
+  admin_action_at?: string
+  created_at: string
+  updated_at: string
+}
+
+export async function createEscrowTransaction(data: {
+  itemId: string
+  buyerId: string
+  sellerId: string
+  amount: number
+  serviceFee: number
+  totalAmount: number
+  deliveryOption: "sendam" | "direct"
+  paymentMethod?: string
+  paystackReference?: string
+}) {
+  try {
+    const transactionReference = `ESC_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
+    // Create a Purchase record which acts as our escrow transaction
+    const transaction = await prisma.purchase.create({
+      data: {
+        amount: data.totalAmount,
+        paymentReference: data.paystackReference || transactionReference,
+        status: "PENDING",
+        itemId: data.itemId,
+        buyerId: data.buyerId,
+        sellerId: data.sellerId,
+      },
+    })
+
+    return { success: true, transactionReference, transaction }
+  } catch (error) {
+    console.error("Error creating escrow transaction:", error)
+    return { success: false, error: "Failed to create escrow transaction" }
+  }
+}
+
+export async function markPaymentPaid(transactionReference: string) {
+  try {
+    const transaction = await prisma.purchase.update({
+      where: {
+        paymentReference: transactionReference,
+      },
+      data: {
+        status: "PAID",
+      },
+    })
+
+    // TODO: Send notification to seller
+    // await createPaymentNotification(...)
+
+    return { success: true, transaction }
+  } catch (error) {
+    console.error("Error marking payment as paid:", error)
+    return { success: false, error: "Failed to mark payment as paid" }
+  }
+}
+
+export async function markItemDelivered(transactionId: string, adminId?: string) {
+  try {
+    const deliveredAt = new Date()
+    const autoReleaseAt = new Date(deliveredAt.getTime() + 14 * 24 * 60 * 60 * 1000) // 14 days later
+
+    const transaction = await prisma.purchase.update({
+      where: {
+        id: transactionId,
+      },
+      data: {
+        status: "DELIVERED",
+        deliveredAt: deliveredAt,
+      },
+    })
+
+    // TODO: Send notification to buyer
+    // await createDeliveryNotification(...)
+
+    return { success: true, transaction }
+  } catch (error) {
+    console.error("Error marking item as delivered:", error)
+    return { success: false, error: "Failed to mark item as delivered" }
+  }
+}
+    const confirmationDeadline = new Date(deliveredAt.getTime() + 3 * 24 * 60 * 60 * 1000) // 3 days
+    const autoReleaseAt = new Date(deliveredAt.getTime() + 14 * 24 * 60 * 60 * 1000) // 14 days
+
+    const { data: transaction, error } = await supabase
+      .from("escrow_transactions")
+      .update({
+        status: "delivered",
+        delivered_at: deliveredAt.toISOString(),
+        confirmation_deadline: confirmationDeadline.toISOString(),
+        auto_release_at: autoReleaseAt.toISOString(),
+        admin_action_by: adminId,
+        admin_action_at: new Date().toISOString(),
+      })
+      .eq("id", transactionId)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Send notifications
+    await createPaymentNotification(
+      transaction.id,
+      transaction.buyer_id,
+      "item_delivered",
+      "Item Delivered",
+      "Your item has been delivered. Please confirm receipt within 3 days or payment will be auto-released in 14 days.",
+    )
+
+    await createPaymentNotification(
+      transaction.id,
+      transaction.seller_id,
+      "delivery_confirmed",
+      "Delivery Confirmed",
+      "Your item has been delivered to the buyer. Payment will be released once confirmed or automatically in 14 days.",
+    )
+
+    revalidatePath("/admin")
+    return { success: true, transaction }
+  } catch (error) {
+    console.error("Error marking item as delivered:", error)
+    return { success: false, error: "Failed to update delivery status" }
+  }
+}
+
+export async function confirmReceipt(transactionReference: string, buyerId: string) {
+  try {
+    const supabase = await createClient()
+
+    // First get the transaction
+    const { data: transaction, error: fetchError } = await supabase
+      .from("escrow_transactions")
+      .select("*")
+      .eq("transaction_reference", transactionReference)
+      .eq("buyer_id", buyerId)
+      .single()
+
+    if (fetchError || !transaction) {
+      return { success: false, error: "Transaction not found or unauthorized" }
+    }
+
+    if (transaction.status !== "delivered") {
+      return { success: false, error: "Item must be delivered before confirmation" }
+    }
+
+    // Update transaction status
+    const { data: updatedTransaction, error } = await supabase
+      .from("escrow_transactions")
+      .update({
+        status: "confirmed",
+        released_at: new Date().toISOString(),
+      })
+      .eq("transaction_reference", transactionReference)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Create payment release record
+    const sellerReceived = transaction.amount - transaction.service_fee
+
+    await supabase.from("payment_releases").insert({
+      escrow_transaction_id: transaction.id,
+      release_type: "buyer_confirmed",
+      released_amount: transaction.amount,
+      service_fee_deducted: transaction.service_fee,
+      seller_received: sellerReceived,
+      release_reason: "Buyer confirmed receipt of item",
+      released_by: buyerId,
+    })
+
+    // Send notification to seller
+    await createPaymentNotification(
+      transaction.id,
+      transaction.seller_id,
+      "payment_released",
+      "Payment Released",
+      `Payment of ₦${sellerReceived.toLocaleString()} has been released to your account.`,
+    )
+
+    revalidatePath("/purchase")
+    return { success: true, transaction: updatedTransaction }
+  } catch (error) {
+    console.error("Error confirming receipt:", error)
+    return { success: false, error: "Failed to confirm receipt" }
+  }
+}
+
+export async function raiseDispute(transactionReference: string, userId: string, reason: string) {
+  try {
+    const supabase = await createClient()
+
+    const { data: transaction, error } = await supabase
+      .from("escrow_transactions")
+      .update({
+        status: "disputed",
+        dispute_reason: reason,
+        disputed_at: new Date().toISOString(),
+      })
+      .eq("transaction_reference", transactionReference)
+      .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Notify admin about dispute
+    const adminEmails = process.env.ADMIN_EMAILS?.split(",") || []
+    for (const email of adminEmails) {
+      const { data: admin } = await supabase.from("users").select("id").eq("email", email.trim()).single()
+
+      if (admin) {
+        await createPaymentNotification(
+          transaction.id,
+          admin.id,
+          "dispute_raised",
+          "Payment Dispute Raised",
+          `A payment dispute has been raised for transaction ${transactionReference}. Reason: ${reason}`,
+        )
+      }
+    }
+
+    revalidatePath("/purchase")
+    return { success: true, transaction }
+  } catch (error) {
+    console.error("Error raising dispute:", error)
+    return { success: false, error: "Failed to raise dispute" }
+  }
+}
+
+export async function resolveDispute(
+  transactionReference: string,
+  adminId: string,
+  resolution: string,
+  action: "release_to_seller" | "refund_to_buyer",
+) {
+  try {
+    const supabase = await createClient()
+    const newStatus = action === "release_to_seller" ? "released" : "refunded"
+
+    const { data: transaction, error } = await supabase
+      .from("escrow_transactions")
+      .update({
+        status: newStatus,
+        dispute_resolution: resolution,
+        dispute_resolved_at: new Date().toISOString(),
+        admin_action_by: adminId,
+        admin_action_at: new Date().toISOString(),
+        released_at: action === "release_to_seller" ? new Date().toISOString() : null,
+      })
+      .eq("transaction_reference", transactionReference)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Create payment release record
+    const amount =
+      action === "release_to_seller" ? transaction.amount - transaction.service_fee : transaction.total_amount
+
+    await supabase.from("payment_releases").insert({
+      escrow_transaction_id: transaction.id,
+      release_type: "dispute_resolved",
+      released_amount: transaction.amount,
+      service_fee_deducted: action === "release_to_seller" ? transaction.service_fee : 0,
+      seller_received: amount,
+      release_reason: resolution,
+      released_by: adminId,
+    })
+
+    // Send notifications
+    const message =
+      action === "release_to_seller"
+        ? "Dispute resolved in favor of seller. Payment released."
+        : "Dispute resolved in favor of buyer. Refund processed."
+
+    await createPaymentNotification(
+      transaction.id,
+      transaction.buyer_id,
+      "dispute_resolved",
+      "Dispute Resolved",
+      message,
+    )
+    await createPaymentNotification(
+      transaction.id,
+      transaction.seller_id,
+      "dispute_resolved",
+      "Dispute Resolved",
+      message,
+    )
+
+    revalidatePath("/admin")
+    return { success: true, transaction }
+  } catch (error) {
+    console.error("Error resolving dispute:", error)
+    return { success: false, error: "Failed to resolve dispute" }
+  }
+}
+
+export async function processAutoReleases() {
+  try {
+    const supabase = await createClient()
+
+    // Get transactions ready for auto-release
+    const { data: transactions, error } = await supabase
+      .from("escrow_transactions")
+      .select("*")
+      .eq("status", "delivered")
+      .lt("auto_release_at", new Date().toISOString())
+
+    if (error) throw error
+
+    let processedCount = 0
+
+    for (const transaction of transactions || []) {
+      try {
+        // Update transaction status
+        await supabase
+          .from("escrow_transactions")
+          .update({
+            status: "released",
+            released_at: new Date().toISOString(),
+            admin_notes: "Payment auto-released after 14 days",
+          })
+          .eq("id", transaction.id)
+
+        // Create payment release record
+        const sellerReceived = transaction.amount - transaction.service_fee
+
+        await supabase.from("payment_releases").insert({
+          escrow_transaction_id: transaction.id,
+          release_type: "auto_released",
+          released_amount: transaction.amount,
+          service_fee_deducted: transaction.service_fee,
+          seller_received: sellerReceived,
+          release_reason: "Payment auto-released after 14 days",
+        })
+
+        // Send notifications
+        await createPaymentNotification(
+          transaction.id,
+          transaction.seller_id,
+          "payment_released",
+          "Payment Auto-Released",
+          `Payment of ₦${sellerReceived.toLocaleString()} has been automatically released to your account.`,
+        )
+
+        await createPaymentNotification(
+          transaction.id,
+          transaction.buyer_id,
+          "payment_auto_released",
+          "Payment Auto-Released",
+          "Payment has been automatically released to the seller after 14 days.",
+        )
+
+        processedCount++
+      } catch (error) {
+        console.error(`Error processing auto-release for ${transaction.transaction_reference}:`, error)
+      }
+    }
+
+    return { success: true, processedCount }
+  } catch (error) {
+    console.error("Error processing auto-releases:", error)
+    return { success: false, error: "Failed to process auto-releases" }
+  }
+}
+
+async function createPaymentNotification(
+  escrowTransactionId: string,
+  recipientId: string,
+  notificationType: string,
+  title: string,
+  message: string,
+) {
+  try {
+    const supabase = await createClient()
+
+    await supabase.from("payment_notifications").insert({
+      escrow_transaction_id: escrowTransactionId,
+      recipient_id: recipientId,
+      notification_type: notificationType,
+      title,
+      message,
+    })
+  } catch (error) {
+    console.error("Error creating payment notification:", error)
+  }
+}
+
+export async function getEscrowTransactions(userId?: string, isAdmin = false) {
+  try {
+    const supabase = await createClient()
+
+    let query = supabase.from("escrow_transactions").select(`
+        *,
+        items(title, price, images),
+        buyer:users!buyer_id(email, full_name),
+        seller:users!seller_id(email, full_name)
+      `)
+
+    if (!isAdmin && userId) {
+      query = query.or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+    }
+
+    const { data: transactions, error } = await query.order("created_at", { ascending: false })
+
+    if (error) throw error
+
+    return { success: true, transactions }
+  } catch (error) {
+    console.error("Error fetching escrow transactions:", error)
+    return { success: false, error: "Failed to fetch transactions" }
+  }
+}
+
+export async function getEscrowTransaction(transactionReference: string) {
+  try {
+    const supabase = await createClient()
+
+    const { data: transaction, error } = await supabase
+      .from("escrow_transactions")
+      .select(`
+        *,
+        items(title, price, images),
+        buyer:users!buyer_id(email, full_name),
+        seller:users!seller_id(email, full_name)
+      `)
+      .eq("transaction_reference", transactionReference)
+      .single()
+
+    if (error) throw error
+
+    return { success: true, transaction }
+  } catch (error) {
+    console.error("Error fetching escrow transaction:", error)
+    return { success: false, error: "Failed to fetch transaction" }
+  }
+}

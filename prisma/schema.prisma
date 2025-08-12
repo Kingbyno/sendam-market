@@ -1,0 +1,237 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  passwordHash String?
+  avatar       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  items           Item[]
+  purchasesAsBuyer  Purchase[] @relation("purchasesAsBuyer")
+  purchasesAsSeller Purchase[] @relation("purchasesAsSeller")
+  reviewsAsBuyer    Review[]   @relation("reviewsAsBuyer")
+  reviewsAsSeller   Review[]   @relation("reviewsAsSeller")
+  termsAgreements TermsAgreement[]
+  paymentInfo     SellerPaymentInfo?
+  suggestedCategories Category[] @relation("SuggestedCategories")
+
+  @@map("users")
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  icon        String?
+  color       String?
+  featured    Boolean @default(false)
+  order       Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  status      CategoryStatus @default(APPROVED)
+
+  // Self-relation for sub-categories
+  parentId    String?
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children    Category[] @relation("SubCategories")
+
+  // For user-suggested categories
+  suggestedById String?
+  suggestedBy   User?      @relation("SuggestedCategories", fields: [suggestedById], references: [id])
+
+  // Relations
+  items Item[]
+
+  @@map("categories")
+}
+
+model Item {
+  id              String          @id @default(cuid())
+  title           String
+  slug            String          @unique
+  description     String
+  price           Float
+  condition       ItemCondition   @default(GOOD)
+  location        String?
+  images          String[]        @default([])
+  isPublished     Boolean         @default(false)
+  status          ItemStatus      @default(PENDING)
+  originalPrice   Float?
+  phone           String
+  whatsapp        String?
+  address         String
+  tags            String[]        @default([])
+  views           Int             @default(0)
+  expiresAt       DateTime?
+  negotiable      Boolean         @default(true)
+  urgent          Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Foreign Keys
+  sellerId        String
+  categoryId      String?
+
+  // Relations
+  seller          User            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  category        Category?       @relation(fields: [categoryId], references: [id])
+  purchases       Purchase[]
+  reviews         Review[]
+
+  @@map("items")
+}
+
+
+model Purchase {
+  id               String          @id @default(cuid())
+  amount           Float
+  status           PurchaseStatus  @default(PENDING)
+  paymentReference String          @unique
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deliveredAt      DateTime?       // When the item was marked as delivered
+  confirmedAt      DateTime?       // When the buyer confirmed receipt
+  releasedAt       DateTime?       // When funds were released to the seller
+
+  // Foreign Keys
+  itemId   String
+  buyerId  String
+  sellerId String
+
+  // Relations
+  item   Item @relation(fields: [itemId], references: [id])
+  buyer  User @relation("purchasesAsBuyer", fields: [buyerId], references: [id])
+  seller User @relation("purchasesAsSeller", fields: [sellerId], references: [id])
+
+  @@map("purchases")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  // Foreign Keys
+  itemId   String
+  buyerId  String
+  sellerId String
+
+  // Relations
+  item   Item @relation(fields: [itemId], references: [id])
+  buyer  User @relation("reviewsAsBuyer", fields: [buyerId], references: [id])
+  seller User @relation("reviewsAsSeller", fields: [sellerId], references: [id])
+
+  @@map("reviews")
+}
+
+model SellerPaymentInfo {
+  id            String   @id @default(cuid())
+  bankName      String
+  accountName   String
+  accountNumber String
+  verified      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Foreign Keys
+  sellerId String @unique
+
+  // Relations
+  seller User @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_payment_info")
+}
+
+model TermsAgreement {
+  id        String    @id @default(cuid())
+  type      TermsType
+  version   String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+
+  // Foreign Keys
+  userId String
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("terms_agreements")
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  imageUrl  String
+  link      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("banners")
+}
+
+// Enums
+enum CategoryStatus {
+  PENDING
+  APPROVED
+
+  @@map("category_status")
+}
+
+enum ItemCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+
+  @@map("item_condition")
+}
+
+enum ItemStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SOLD
+
+  @@map("item_status")
+}
+
+
+enum PurchaseStatus {
+  PENDING
+  PAID
+  DELIVERED
+  CONFIRMED // Buyer has confirmed they received the item
+  RELEASED  // Funds have been released to the seller
+  COMPLETED
+  DISPUTED  // The transaction is in dispute
+  REFUNDED  // The funds have been returned to the buyer
+
+  @@map("purchase_status")
+}
+
+enum TermsType {
+  SELLER_TERMS
+  BUYER_TERMS
+  PRIVACY_POLICY
+
+  @@map("terms_type")
+}
