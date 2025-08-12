@@ -9,18 +9,28 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
+        const { pathname } = req.nextUrl
+        
+        // Always allow auth routes to prevent redirect loops
+        if (pathname.startsWith('/api/auth')) {
+          return true
+        }
+        
         // Protect sell routes - require authentication
-        if (req.nextUrl.pathname.startsWith("/sell")) {
+        if (pathname.startsWith("/sell")) {
           return !!token
         }
         
         // Protect admin dashboard routes and check admin status
-        if (req.nextUrl.pathname.startsWith("/admin")) {
+        if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
           if (!token) return false
           
-          const adminEmails = (process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",")
+          const adminEmails = (process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
+            .split(",")
+            .map(e => e.trim().toLowerCase())
+            .filter(Boolean)
           
-          return adminEmails.includes(token.email || "")
+          return adminEmails.includes((token.email || "").toLowerCase())
         }
         
         // Allow all other routes

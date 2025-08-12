@@ -110,6 +110,9 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
   },
 
+  // Trust host in production
+  trustHost: true,
+
   debug: process.env.NODE_ENV === "development",
 }
 
