@@ -81,7 +81,7 @@ After getting your production database URL, set these in Vercel:
 ```bash
 # Production values for Vercel
 DATABASE_URL=your_actual_production_database_url_here
-NEXTAUTH_URL=https://sendam-market-of3r.vercel.app
+NEXTAUTH_URL=https://your-deployment.vercel.app
 NEXTAUTH_SECRET=your_nextauth_secret_here
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
