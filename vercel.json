@@ -1,0 +1,16 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "pnpm run vercel-build",
+  "installCommand": "pnpm install",
+  "functions": {
+    "app/**/*.{js,ts}": {
+      "maxDuration": 10
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/auto-release",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

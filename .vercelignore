@@ -1,0 +1,16 @@
+# Don't ignore node_modules/@prisma/client
+!node_modules/@prisma/client/
+!.prisma/
+
+# Development files
+.env.local
+.env*.local
+
+# Build outputs (except for generated Prisma client)
+.next/
+.vercel/
+
+# Dependencies
+node_modules/
+!node_modules/.prisma/
+!node_modules/@prisma/
