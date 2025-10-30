@@ -24,13 +24,7 @@ export default withAuth(
         // Protect admin dashboard routes and check admin status
         if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
           if (!token) return false
-          
-          const adminEmails = (process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
-            .split(",")
-            .map(e => e.trim().toLowerCase())
-            .filter(Boolean)
-          
-          return adminEmails.includes((token.email || "").toLowerCase())
+          return token.isAdmin === true
         }
         
         // Allow all other routes

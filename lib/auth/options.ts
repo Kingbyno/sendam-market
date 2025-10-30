@@ -61,12 +61,19 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
       // Initial sign in
       if (account && user) {
         token.userId = user.id
-        token.isAdmin = isAdminEmail(user.email || "")
       }
+      
+      // Always check admin status on token refresh and initial sign in
+      if (user?.email) {
+        token.isAdmin = isAdminEmail(user.email)
+      } else if (token.email) {
+        token.isAdmin = isAdminEmail(token.email)
+      }
+      
       return token
     },
 
@@ -110,14 +117,17 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
   },
 
-  // Trust host in production
-  trustHost: true,
-
   debug: process.env.NODE_ENV === "development",
 }
 
 // Helper function to check if email is admin
 function isAdminEmail(email: string): boolean {
-  const adminEmails = process.env.ADMIN_EMAILS?.split(",").map(e => e.trim().toLowerCase()) || []
+  if (!email) return false
+  
+  const adminEmails = (process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
+    .split(",")
+    .map(e => e.trim().toLowerCase())
+    .filter(Boolean)
+    
   return adminEmails.includes(email.toLowerCase())
 }

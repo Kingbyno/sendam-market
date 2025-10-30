@@ -38,16 +38,16 @@ export function Header() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-gradient-to-r from-white/95 via-blue-50/95 to-violet-50/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-6">
         {/* Logo Section */}
         <div className="flex items-center space-x-6">
           <Link href="/" className="flex items-center space-x-2 group">
             <div className="relative">
-              <Package2 className="h-7 w-7 text-blue-600 transition-transform duration-200 group-hover:scale-110" />
-              <div className="absolute inset-0 h-7 w-7 bg-gradient-to-r from-blue-500/20 to-violet-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Package2 className="h-7 w-7 text-primary transition-transform duration-200 group-hover:scale-110" />
+              <div className="absolute inset-0 h-7 w-7 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300" />
             </div>
-            <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="font-bold text-xl bg-gradient-to-r from-primary to-accent-purple bg-clip-text text-transparent hover:from-accent-blue hover:to-accent-pink transition-all duration-300">
               Sendam
             </span>
           </Link>

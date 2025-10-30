@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <body className={inter.className}>
+      <body className={`${inter.className} antialiased`}>
         <QueryProvider>
           <ThemeProvider
             attribute="class"
@@ -32,12 +32,23 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <AuthProvider>
-              <div className="relative flex min-h-screen flex-col bg-background">
+              <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-background/95">
+                <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.1),rgba(255,255,255,0))]" />
                 <Header />
-                <main className="flex-1">{children}</main>
+                <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+                  <div className="mx-auto w-full max-w-7xl">
+                    {children}
+                  </div>
+                </main>
                 <Footer />
               </div>
-              <Toaster />
+              <Toaster 
+                position="top-right"
+                closeButton
+                richColors
+                expand
+                visibleToasts={3}
+              />
             </AuthProvider>
           </ThemeProvider>
         </QueryProvider>
