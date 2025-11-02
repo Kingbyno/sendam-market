@@ -42,7 +42,7 @@ export default async function MarketplacePage({
   }
 
   // Fetch all data in parallel with error handling
-  let itemsResult = { items: [], totalCount: 0 }
+  let itemsResult: { items: any[]; totalCount: number } = { items: [], totalCount: 0 }
   let categories: any[] = []
   let banners: any[] = []
   let isDatabaseAvailable = true
