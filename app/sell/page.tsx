@@ -2,7 +2,18 @@ import { SellerForm } from "@/components/seller/seller-form"
 import { getCategories } from "@/lib/queries/item-queries"
 
 export default async function SellPage() {
-  const categories = await getCategories()
+  let categories = []
+  let categoriesError = false
+
+  try {
+    categories = await getCategories()
+  } catch (err) {
+    // getCategories already catches errors, but in case something throws upstream,
+    // mark an error so the UI can show a friendly message and allow a manual category.
+    console.error("Failed to load categories for sell page:", err)
+    categories = []
+    categoriesError = true
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -12,7 +23,7 @@ export default async function SellPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Sell Your Item</h1>
             <p className="text-gray-600">List your item for sale. It will be reviewed before going live.</p>
           </div>
-          <SellerForm categories={categories} />
+          <SellerForm categories={categories} categoriesError={categoriesError} />
         </div>
       </main>
     </div>

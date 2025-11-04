@@ -20,7 +20,7 @@ import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 export function Header() {
   const { data: session, status } = useSession()
   const user = session?.user
-  
+
   // Check if user is admin based on email
   const isAdmin = useMemo(() => {
     if (!user?.email) return false
@@ -29,7 +29,7 @@ export function Header() {
       .map(e => e.trim().toLowerCase())
     return adminEmails.includes(user.email.toLowerCase())
   }, [user?.email])
-  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const navLinks = [
@@ -51,7 +51,7 @@ export function Header() {
               Sendam
             </span>
           </Link>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navLinks.map(link => (
@@ -74,9 +74,9 @@ export function Header() {
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="relative h-9 w-9 rounded-full bg-gradient-to-br from-blue-100/50 to-violet-100/50 hover:from-blue-200/50 hover:to-violet-200/50 transition-all duration-200 hover:scale-105 active:scale-95"
                 >
                   <Avatar className="h-8 w-8 ring-2 ring-blue-200/50">
@@ -88,8 +88,8 @@ export function Header() {
                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-200/20 to-violet-200/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
+              <DropdownMenuContent
+                align="end"
                 className="w-56 mt-2 bg-card/95 backdrop-blur-sm border border-border/50 shadow-lg rounded-xl animate-scale-in"
               >
                 <DropdownMenuLabel className="font-semibold text-foreground">
@@ -115,8 +115,8 @@ export function Header() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator className="bg-border/50" />
-                <DropdownMenuItem 
-                  onClick={() => signOut()} 
+                <DropdownMenuItem
+                  onClick={() => signOut()}
                   className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
                 >
                   <span className="mr-2">🚪</span>
@@ -125,8 +125,8 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button 
-              asChild 
+            <Button
+              asChild
               className="hidden md:flex bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white text-sm font-medium"
             >
               <Link href="/auth/login">Sign In</Link>
@@ -136,17 +136,17 @@ export function Header() {
           {/* Mobile Menu */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="md:hidden h-9 w-9 border-blue-200/60 bg-blue-50/50 hover:bg-blue-100/70 hover:border-blue-300/70 transition-all duration-200 shadow-sm"
               >
                 <Menu className="h-5 w-5 text-blue-700" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent 
-              side="left" 
+            <SheetContent
+              side="left"
               className="w-80 bg-white/95 backdrop-blur-sm border-blue-100/50"
             >
               <VisuallyHidden.Root>
@@ -159,7 +159,7 @@ export function Header() {
                   <Package2 className="h-6 w-6 text-blue-600" />
                   <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Sendam</span>
                 </div>
-                
+
                 {/* Mobile Navigation */}
                 <nav className="flex flex-col space-y-2 py-6 flex-1">
                   {navLinks.map(link => (
@@ -172,10 +172,14 @@ export function Header() {
                       <span>{link.label}</span>
                     </Link>
                   ))}
-                  
+
                   {!user && (
                     <div className="pt-4 border-t border-blue-100/50">
-                      <Button asChild className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white">
+                      <Button
+                        asChild
+                        className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
                         <Link href="/auth/login">Sign In</Link>
                       </Button>
                     </div>

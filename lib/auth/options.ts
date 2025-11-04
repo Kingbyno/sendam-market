@@ -15,31 +15,47 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.error("Missing credentials");
           throw new Error("Please enter both email and password.")
         }
         try {
           // Find user by email
           const user = await prisma.user.findUnique({
             where: { email: credentials.email }
-          })
+          }).catch(err => {
+            console.error("Database error:", err);
+            throw new Error("Database connection failed")
+          });
+
           if (!user) {
+            console.error("No user found for email:", credentials.email);
             throw new Error("No account found with this email.")
           }
           if (!user.passwordHash) {
+            console.error("No password hash found for user");
             throw new Error("This account does not have a password set. Please use social login or reset your password.")
           }
           // Verify password
           const isPasswordValid = await bcrypt.compare(credentials.password, user.passwordHash)
+            .catch(err => {
+              console.error("Password comparison error:", err);
+              throw new Error("Password verification failed")
+            });
+
           if (!isPasswordValid) {
+            console.error("Invalid password for user:", credentials.email);
             throw new Error("Incorrect password. Please try again.")
           }
+
           // Return user object
-          return {
+          const userToReturn = {
             id: user.id,
             email: user.email,
             name: user.name ?? undefined,
             avatar: user.avatar ?? undefined,
-          }
+          };
+          console.log("Authentication successful for:", credentials.email);
+          return userToReturn
         } catch (error) {
           if (error instanceof Error) {
             throw new Error(error.message)
@@ -48,14 +64,14 @@ export const authOptions: NextAuthOptions = {
         }
       }
     }),
-    
+
     // Google OAuth provider
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     })
   ],
-  
+
   session: {
     strategy: "jwt",
   },
@@ -66,14 +82,14 @@ export const authOptions: NextAuthOptions = {
       if (account && user) {
         token.userId = user.id
       }
-      
+
       // Always check admin status on token refresh and initial sign in
       if (user?.email) {
         token.isAdmin = isAdminEmail(user.email)
       } else if (token.email) {
         token.isAdmin = isAdminEmail(token.email)
       }
-      
+
       return token
     },
 
@@ -123,11 +139,11 @@ export const authOptions: NextAuthOptions = {
 // Helper function to check if email is admin
 function isAdminEmail(email: string): boolean {
   if (!email) return false
-  
+
   const adminEmails = (process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
     .split(",")
     .map(e => e.trim().toLowerCase())
     .filter(Boolean)
-    
+
   return adminEmails.includes(email.toLowerCase())
 }

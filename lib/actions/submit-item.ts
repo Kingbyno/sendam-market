@@ -65,7 +65,7 @@ export async function submitItem(formData: FormData) {
       categoryId: !!categoryId,
       imageFiles: imageFiles.length
     })
-    
+
     if (!title || !description || !price || !condition || !location || !phone || !address || !categoryId) {
       const missingFields = []
       if (!title) missingFields.push("title")
@@ -76,7 +76,7 @@ export async function submitItem(formData: FormData) {
       if (!phone) missingFields.push("phone")
       if (!address) missingFields.push("address")
       if (!categoryId) missingFields.push("category")
-      
+
       console.log("Missing required fields:", missingFields)
       return {
         success: false,
@@ -113,7 +113,7 @@ export async function submitItem(formData: FormData) {
         message: "At least one image is required"
       }
     }
-    
+
     console.log(`Processing ${imageFiles.length} image file(s)...`)
     const imageUrls = await uploadFiles(imageFiles)
     console.log(`Successfully uploaded ${imageUrls.length} image(s) ✅`)
@@ -173,33 +173,41 @@ export async function submitItem(formData: FormData) {
     if (brandNew) enhancedDescription += `\nCondition: Brand New Item`
     if (urgent) enhancedDescription += `\n⚡ URGENT SALE`
 
+    // If user provided a suggested category name (useful when categories couldn't load), append to description
+    const suggestedCategory = formData.get("suggestedCategory") as string | null
+    if (suggestedCategory) {
+      enhancedDescription += `\n\nSuggested Category: ${suggestedCategory}`
+      console.log("Appended suggested category to description:", suggestedCategory)
+    }
+
     // Create the item
     console.log("Creating item in database...")
-    const item = await prisma.item.create({
-      data: {
-        title,
-        slug: `${slug}-${Date.now()}`, // Add timestamp to ensure uniqueness
-        description: enhancedDescription,
-        price,
-        originalPrice,
-        condition,
-        location,
-        phone,
-        address,
-        images: imageUrls,
-        status: "PENDING", // Items must be approved by an admin
-        tags: tags,
-        views: 0,
-        negotiable,
-        urgent,
-        seller: {
-          connect: { id: userId },
-        },
-        category: {
-          connect: { id: categoryId },
-        },
+    const createData: any = {
+      title,
+      slug: `${slug}-${Date.now()}`, // Add timestamp to ensure uniqueness
+      description: enhancedDescription,
+      price,
+      originalPrice,
+      condition,
+      location,
+      phone,
+      address,
+      images: imageUrls,
+      status: "PENDING", // Items must be approved by an admin
+      tags: tags,
+      views: 0,
+      negotiable,
+      urgent,
+      seller: {
+        connect: { id: userId },
       },
-    })
+    }
+
+    if (categoryId) {
+      createData.category = { connect: { id: categoryId } }
+    }
+
+    const item = await prisma.item.create({ data: createData })
     console.log(`Item created successfully with ID: ${item.id}`)
 
     revalidatePath("/marketplace")
