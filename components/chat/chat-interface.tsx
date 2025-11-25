@@ -90,7 +90,7 @@ export function ChatInterface({ chatId, item, currentUser, otherParticipant, isA
     const total = item.price + fee
     router.push(
       `/payment/checkout?itemId=${item.id}&amount=${total}&description=${encodeURIComponent(
-        `Payment for ${item.title} with Sendam verification`,
+        `Payment for ${item.title} with Xendam verification`,
       )}`,
     )
   }

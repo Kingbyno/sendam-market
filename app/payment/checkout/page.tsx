@@ -65,7 +65,7 @@ function CheckoutPageInner() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Delivery Option:</span>
                   <span className="font-medium capitalize">
-                    {isWithInspection ? "Sendam Inspection & Delivery" : "Direct Meetup"}
+                    {isWithInspection ? "Xendam Inspection & Delivery" : "Direct Meetup"}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -74,7 +74,7 @@ function CheckoutPageInner() {
                 </div>
                 {isWithInspection && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Sendam Service Fee (10%):</span>
+                    <span className="text-gray-600">Xendam Service Fee (10%):</span>
                     <span className="font-medium">₦{numericServiceFee.toLocaleString()}</span>
                   </div>
                 )}
@@ -87,7 +87,7 @@ function CheckoutPageInner() {
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-semibold text-blue-800 mb-2">
-                {isWithInspection ? "Sendam Protection" : "Escrow Protection"}
+                {isWithInspection ? "Xendam Protection" : "Escrow Protection"}
               </h4>
               <ul className="text-sm text-blue-700 space-y-1">
                 {isWithInspection ? (

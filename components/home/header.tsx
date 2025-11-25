@@ -24,7 +24,7 @@ export function Header() {
   // Check if user is admin based on email
   const isAdmin = useMemo(() => {
     if (!user?.email) return false
-    const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "admin@sendam.com,admin@example.com,promisetheking@gmail.com,kingbyno007@gmail.com")
+    const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "admin@xendam.com,admin@example.com,promisetheking@gmail.com,kingbyno007@gmail.com")
       .split(",")
       .map(e => e.trim().toLowerCase())
     return adminEmails.includes(user.email.toLowerCase())
@@ -48,7 +48,7 @@ export function Header() {
               <div className="absolute inset-0 h-7 w-7 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300" />
             </div>
             <span className="font-bold text-xl bg-gradient-to-r from-primary to-accent-purple bg-clip-text text-transparent hover:from-accent-blue hover:to-accent-pink transition-all duration-300">
-              Sendam
+              Xendam
             </span>
           </Link>
 
@@ -157,7 +157,7 @@ export function Header() {
                 {/* Mobile Logo */}
                 <div className="flex items-center space-x-2 pb-6 border-b border-blue-100/50">
                   <Package2 className="h-6 w-6 text-blue-600" />
-                  <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Sendam</span>
+                  <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Xendam</span>
                 </div>
 
                 {/* Mobile Navigation */}

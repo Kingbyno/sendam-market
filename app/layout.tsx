@@ -11,8 +11,30 @@ import { ThemeProvider } from "next-themes"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Sendam - Secure P2P Marketplace",
+  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
+  title: { default: "Xendam", template: "%s | Xendam" },
   description: "Buy and sell with confidence using our secure escrow service.",
+  icons: [{ rel: "icon", url: "/placeholder-logo.png" }],
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
+  ],
+  openGraph: {
+    title: "Xendam - Secure P2P Marketplace",
+    description: "Buy and sell with confidence using our secure escrow service.",
+    url: "/",
+    siteName: "Xendam",
+    images: ["/placeholder.jpg"],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Xendam - Secure P2P Marketplace",
+    description: "Buy and sell with confidence using our secure escrow service.",
+    images: ["/placeholder.jpg"],
+  },
+  viewport: { width: "device-width", initialScale: 1 },
 }
 
 export default function RootLayout({

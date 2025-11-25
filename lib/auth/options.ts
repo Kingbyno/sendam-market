@@ -14,28 +14,25 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        // NextAuth expects `authorize` to return a user object on success
+        // or null on failure. Throwing errors causes a 401 response.
         if (!credentials?.email || !credentials?.password) {
-          console.error("Missing credentials");
-          throw new Error("Please enter both email and password.")
+          if (process.env.NODE_ENV === 'development') console.debug('Authorize: missing email or password')
+          return null
         }
-        try {
-          // Find user by email
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email }
-          }).catch(err => {
-            console.error("Database error:", err);
-            throw new Error("Database connection failed")
-          });
 
+        try {
+          const user = await prisma.user.findUnique({ where: { email: credentials.email } })
           if (!user) {
-            console.error("No user found for email:", credentials.email);
-            throw new Error("No account found with this email.")
+            if (process.env.NODE_ENV === 'development') console.debug('Authorize: no user found for', credentials.email)
+            return null
           }
+
           if (!user.passwordHash) {
-            console.error("No password hash found for user");
-            throw new Error("This account does not have a password set. Please use social login or reset your password.")
+            if (process.env.NODE_ENV === 'development') console.debug('Authorize: user has no passwordHash', credentials.email)
+            return null
           }
-          // Verify password
+
           const isPasswordValid = await bcrypt.compare(credentials.password, user.passwordHash)
             .catch(err => {
               console.error("Password comparison error:", err);
@@ -43,24 +40,19 @@ export const authOptions: NextAuthOptions = {
             });
 
           if (!isPasswordValid) {
-            console.error("Invalid password for user:", credentials.email);
-            throw new Error("Incorrect password. Please try again.")
+            if (process.env.NODE_ENV === 'development') console.debug('Authorize: invalid password for', credentials.email)
+            return null
           }
 
-          // Return user object
-          const userToReturn = {
+          return {
             id: user.id,
             email: user.email,
             name: user.name ?? undefined,
-            avatar: user.avatar ?? undefined,
-          };
-          console.log("Authentication successful for:", credentials.email);
-          return userToReturn
-        } catch (error) {
-          if (error instanceof Error) {
-            throw new Error(error.message)
+            image: user.avatar ?? undefined,
           }
-          throw new Error("Authentication failed. Please try again.")
+        } catch (error) {
+          console.error('Authorize error:', error)
+          return null
         }
       }
     }),

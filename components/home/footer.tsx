@@ -15,7 +15,7 @@ export function Footer() {
             className="flex items-center space-x-2 mb-4 group"
           >
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-              Sendam
+              Xendam
             </span>
           </Link>
           <p className="text-gray-600 max-w-md leading-relaxed mb-6">
@@ -98,7 +98,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-blue-100/50">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-500 mb-4 md:mb-0">
-              © {currentYear} Sendam. All rights reserved. • Secure marketplace with escrow protection
+              © {currentYear} Xendam. All rights reserved. • Secure marketplace with escrow protection
             </p>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-xs text-gray-400">
