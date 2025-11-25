@@ -5,8 +5,8 @@ import Link from "next/link"
 import { Shield, Users, Award, CheckCircle, ArrowRight } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "About Sendam - Secure Marketplace",
-  description: "Learn about Sendam's mission to provide a secure, trusted marketplace with escrow protection for all transactions.",
+  title: "About Xendam - Secure Marketplace",
+  description: "Learn about Xendam's mission to provide a secure, trusted marketplace with escrow protection for all transactions.",
 }
 
 export default function AboutPage() {
@@ -17,7 +17,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 bg-clip-text text-transparent leading-tight mb-6">
-              About Sendam
+              About Xendam
             </h1>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
               Nigeria's most trusted marketplace for secure buying and selling. We protect every transaction 
@@ -38,7 +38,7 @@ export default function AboutPage() {
                   Our Mission
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                  At Sendam, we believe that buying and selling online should be safe, secure, and straightforward. 
+                  At Xendam, we believe that buying and selling online should be safe, secure, and straightforward. 
                   Our mission is to create a marketplace where every transaction is protected, every seller is 
                   verified, and every buyer can shop with complete confidence.
                 </p>
@@ -80,7 +80,7 @@ export default function AboutPage() {
                 What Makes Us Different
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                We've built Sendam with security and trust as our foundation, offering features that protect both buyers and sellers.
+                We've built Xendam with security and trust as our foundation, offering features that protect both buyers and sellers.
               </p>
             </div>
 
@@ -134,7 +134,7 @@ export default function AboutPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                How Sendam Works
+                How Xendam Works
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Our streamlined process ensures secure transactions from start to finish.
@@ -171,7 +171,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Delivery</h3>
                 <p className="text-gray-600 text-sm">
-                  Choose Sendam verification (10% fee) for inspection or direct meeting at no extra cost.
+                  Choose Xendam verification (10% fee) for inspection or direct meeting at no extra cost.
                 </p>
               </div>
 
@@ -231,7 +231,7 @@ export default function AboutPage() {
               Ready to Start Trading Securely?
             </h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of users who trust Sendam for their secure online transactions. 
+              Join thousands of users who trust Xendam for their secure online transactions. 
               Your listings are reviewed, your payments are protected, and your peace of mind is our priority.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

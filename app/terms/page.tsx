@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Terms of Service - Sendam Marketplace",
-  description: "Read the terms and conditions for using Sendam's secure escrow marketplace platform.",
+  title: "Terms of Service - Xendam",
+  description: "Read the terms and conditions for using Xendam's secure escrow marketplace platform.",
 }
 
 export default function TermsPage() {
@@ -31,7 +31,7 @@ export default function TermsPage() {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  By accessing and using Sendam Marketplace ("Service"), you accept and agree to be bound by the terms 
+                  By accessing and using Xendam Marketplace ("Service"), you accept and agree to be bound by the terms 
                   and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
@@ -44,7 +44,7 @@ export default function TermsPage() {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Service Description</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Sendam Marketplace is an escrow-protected online marketplace platform that enables users to:
+                  Xendam Marketplace is an escrow-protected online marketplace platform that enables users to:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
                   <li>Buy and sell items with escrow protection</li>
@@ -77,7 +77,7 @@ export default function TermsPage() {
 
               {/* Selling Terms */}
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Selling on Sendam</h2>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Selling on Xendam</h2>
                 
                 <h3 className="text-xl font-medium text-gray-800 mb-3">4.1 Item Listings</h3>
                 <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
@@ -126,7 +126,7 @@ export default function TermsPage() {
                   Two delivery options are available:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
-                  <li><strong>Sendam Verification (10% fee):</strong> We inspect and verify the item before delivery</li>
+                  <li><strong>Xendam Verification (10% fee):</strong> We inspect and verify the item before delivery</li>
                   <li><strong>Direct Meeting:</strong> Meet the seller directly at no additional cost</li>
                 </ul>
               </section>
@@ -194,7 +194,7 @@ export default function TermsPage() {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Limitation of Liability</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Sendam Marketplace acts as an intermediary platform. While we implement security measures and escrow 
+                  Xendam Marketplace acts as an intermediary platform. While we implement security measures and escrow 
                   protection, we are not liable for:
                 </p>
                 <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
@@ -210,7 +210,7 @@ export default function TermsPage() {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Intellectual Property</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  The Sendam platform, including its original content, features, and functionality, is owned by Sendam 
+                  The Xendam platform, including its original content, features, and functionality, is owned by Xendam 
                   and protected by international copyright, trademark, and other intellectual property laws.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
@@ -252,7 +252,7 @@ export default function TermsPage() {
                   For questions about these Terms of Service, please contact us:
                 </p>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-700"><strong>Email:</strong> legal@sendam.com</p>
+                  <p className="text-gray-700"><strong>Email:</strong> legal@xendam.com</p>
                   <p className="text-gray-700"><strong>Support:</strong> Through our contact form at /contact</p>
                   <p className="text-gray-700"><strong>Address:</strong> Nigeria</p>
                 </div>

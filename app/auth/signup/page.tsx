@@ -14,6 +14,12 @@ import { signUp } from "@/lib/auth/actions"
 import { signIn } from "next-auth/react"
 import { Mail, Lock, User, Eye, EyeOff, ShoppingBag } from "lucide-react"
 import { FaGoogle, FaFacebook, FaTwitter, FaGithub } from "react-icons/fa"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Sign Up | Xendam",
+  description: "Create your Xendam account to buy and sell securely.",
+}
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -98,7 +104,7 @@ export default function SignupPage() {
         <div className="text-center">
           <Link href="/" className="inline-flex items-center space-x-2 mb-6">
             <ShoppingBag className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Sendam</span>
+            <span className="text-2xl font-bold text-gray-900">Xendam</span>
           </Link>
           <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
           <p className="mt-2 text-gray-600">Join Nigeria's most trusted marketplace</p>
@@ -230,6 +236,7 @@ export default function SignupPage() {
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="terms"
+                  aria-describedby="terms-desc"
                   checked={acceptTerms}
                   onCheckedChange={(checked: boolean) => setAcceptTerms(checked)}
                 />
@@ -246,6 +253,7 @@ export default function SignupPage() {
                     Privacy Policy
                   </Link>
                 </label>
+                <span id="terms-desc" className="sr-only">Accept the Terms of Service and Privacy Policy</span>
               </div>
 
               <Button type="submit" className="w-full py-6" disabled={isLoading || !acceptTerms}>

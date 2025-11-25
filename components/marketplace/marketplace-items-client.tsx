@@ -191,6 +191,7 @@ export function MarketplaceItemsClient({ items }: MarketplaceItemsClientProps) {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Edit item"
                       onClick={() => handleEdit(item)}
                     >
                       <Pencil className="h-4 w-4" />
@@ -198,6 +199,7 @@ export function MarketplaceItemsClient({ items }: MarketplaceItemsClientProps) {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Delete item"
                       onClick={() => handleDelete(item.id)}
                       disabled={isPending}
                     >
@@ -208,7 +210,7 @@ export function MarketplaceItemsClient({ items }: MarketplaceItemsClientProps) {
                       size="icon"
                       asChild
                     >
-                      <a href={`/item/${item.slug}`} target="_blank" rel="noopener noreferrer">
+                      <a href={`/item/${item.slug}`} target="_blank" rel="noopener noreferrer" aria-label="View item">
                         <Eye className="h-4 w-4" />
                       </a>
                     </Button>

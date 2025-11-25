@@ -1,5 +1,5 @@
 import { AuthProvider } from "@/components/providers/auth-provider"
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { Toaster } from "@/components/ui/sonner"
 import { QueryProvider } from "@/components/providers/query-provider"
@@ -15,10 +15,6 @@ export const metadata: Metadata = {
   title: { default: "Xendam", template: "%s | Xendam" },
   description: "Buy and sell with confidence using our secure escrow service.",
   icons: [{ rel: "icon", url: "/placeholder-logo.png" }],
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
-  ],
   openGraph: {
     title: "Xendam - Secure P2P Marketplace",
     description: "Buy and sell with confidence using our secure escrow service.",
@@ -34,7 +30,15 @@ export const metadata: Metadata = {
     description: "Buy and sell with confidence using our secure escrow service.",
     images: ["/placeholder.jpg"],
   },
-  viewport: { width: "device-width", initialScale: 1 },
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
+  ],
+  width: "device-width",
+  initialScale: 1,
 }
 
 export default function RootLayout({

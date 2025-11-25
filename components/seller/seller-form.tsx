@@ -77,6 +77,7 @@ function ImageUploader({
               </div>
               <button
                 type="button"
+                aria-label="Remove image"
                 onClick={() => handleRemoveImage(index)}
                 className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:scale-110 active:scale-95"
               >
@@ -487,8 +488,9 @@ export function SellerForm({ categories, categoriesError }: { categories: Catego
         <Card className="bg-blue-50/50 border-2 border-blue-200 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-start space-x-4">
-              <Checkbox
-                id="terms"
+              <Checkbox 
+                id="terms" 
+                aria-describedby="seller-terms-desc"
                 checked={termsAccepted}
                 onCheckedChange={(checked: boolean) => setTermsAccepted(!!checked)}
                 className="mt-1 h-5 w-5 bg-blue-100 border-2 border-blue-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 focus:ring-2 focus:ring-blue-300"
@@ -500,7 +502,7 @@ export function SellerForm({ categories, categoriesError }: { categories: Catego
                     Seller Terms and Conditions
                   </Link>
                 </label>
-                <p className="text-sm text-blue-600 mt-2">
+                <p id="seller-terms-desc" className="text-sm text-blue-600 mt-2">
                   Please read and accept our terms before submitting your item for review.
                 </p>
               </div>

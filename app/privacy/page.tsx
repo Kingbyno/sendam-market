@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Sendam Marketplace",
-  description: "Learn how Sendam protects your privacy and handles your personal information in our secure marketplace.",
+  title: "Privacy Policy - Xendam",
+  description: "Learn how Xendam protects your privacy and handles your personal information in our secure marketplace.",
 }
 
 export default function PrivacyPage() {
@@ -31,12 +31,12 @@ export default function PrivacyPage() {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Welcome to Sendam Marketplace ("we," "our," or "us"). We are committed to protecting your personal 
+                  Welcome to Xendam Marketplace ("we," "our," or "us"). We are committed to protecting your personal 
                   information and your right to privacy. This Privacy Policy explains how we collect, use, disclose, 
                   and safeguard your information when you use our marketplace platform.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  By using Sendam, you agree to the collection and use of information in accordance with this policy.
+                  By using Xendam, you agree to the collection and use of information in accordance with this policy.
                 </p>
               </section>
 
@@ -182,7 +182,7 @@ export default function PrivacyPage() {
                   If you have questions about this Privacy Policy or how we handle your data, please contact us:
                 </p>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-700"><strong>Email:</strong> privacy@sendam.com</p>
+                  <p className="text-gray-700"><strong>Email:</strong> privacy@xendam.com</p>
                   <p className="text-gray-700"><strong>Support:</strong> Through our contact form at /contact</p>
                 </div>
               </section>

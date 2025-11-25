@@ -7,6 +7,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Mail, MessageSquare, Shield } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Contact | Xendam",
+  description: "Reach Xendam support for escrow, disputes, and general inquiries.",
+}
 
 export default function ContactAdmin() {
   const [formData, setFormData] = useState({
@@ -165,7 +171,7 @@ export default function ContactAdmin() {
 
         <div className="mt-8 p-4 bg-gradient-to-r from-blue-100/50 to-violet-100/50 rounded-xl">
           <p className="text-sm text-gray-600 text-center">
-            <strong>Quick Response Promise:</strong> Payment disputes within 2 hours • General inquiries within 24 hours • We're here to ensure your Sendam experience is secure and smooth.
+            <strong>Quick Response Promise:</strong> Payment disputes within 2 hours • General inquiries within 24 hours • We're here to ensure your Xendam experience is secure and smooth.
           </p>
         </div>
       </div>

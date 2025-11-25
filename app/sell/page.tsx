@@ -1,5 +1,11 @@
 import { SellerForm } from "@/components/seller/seller-form"
 import { getCategories } from "@/lib/queries/item-queries"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Sell | Xendam",
+  description: "List your item for sale with secure escrow and a mobile-first experience.",
+}
 
 export default async function SellPage() {
   let categories = []
