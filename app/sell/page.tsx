@@ -1,5 +1,5 @@
 import { SellerForm } from "@/components/seller/seller-form"
-import { getCategories } from "@/lib/queries/item-queries"
+import { CategoryWithChildren, getCategories } from "@/lib/queries/item-queries"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default async function SellPage() {
-  let categories = []
+  let categories: CategoryWithChildren[] = []
   let categoriesError = false
 
   try {
