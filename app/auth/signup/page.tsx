@@ -14,12 +14,7 @@ import { signUp } from "@/lib/auth/actions"
 import { signIn } from "next-auth/react"
 import { Mail, Lock, User, Eye, EyeOff, ShoppingBag } from "lucide-react"
 import { FaGoogle, FaFacebook, FaTwitter, FaGithub } from "react-icons/fa"
-import { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: "Sign Up | Xendam",
-  description: "Create your Xendam account to buy and sell securely.",
-}
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)

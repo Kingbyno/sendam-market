@@ -7,12 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Mail, MessageSquare, Shield } from "lucide-react"
-import { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: "Contact | Xendam",
-  description: "Reach Xendam support for escrow, disputes, and general inquiries.",
-}
 
 export default function ContactAdmin() {
   const [formData, setFormData] = useState({
