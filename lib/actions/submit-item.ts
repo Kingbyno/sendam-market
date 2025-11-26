@@ -66,7 +66,7 @@ export async function submitItem(formData: FormData) {
       imageFiles: imageFiles.length
     })
 
-    if (!title || !description || !price || !condition || !location || !phone || !address || !categoryId) {
+    if (!title || !description || !price || !condition || !location || !phone || !address) {
       const missingFields = []
       if (!title) missingFields.push("title")
       if (!description) missingFields.push("description")
@@ -75,7 +75,6 @@ export async function submitItem(formData: FormData) {
       if (!location) missingFields.push("location")
       if (!phone) missingFields.push("phone")
       if (!address) missingFields.push("address")
-      if (!categoryId) missingFields.push("category")
 
       console.log("Missing required fields:", missingFields)
       return {
@@ -83,6 +82,16 @@ export async function submitItem(formData: FormData) {
         message: `Missing required fields: ${missingFields.join(", ")}`
       }
     }
+
+    const suggestedCategory = formData.get("suggestedCategory") as string | null
+    if (!categoryId && !suggestedCategory) {
+      console.log("Missing category selection or suggestion.")
+      return {
+        success: false,
+        message: "Category is required. Select a category or provide a suggestion."
+      }
+    }
+
     console.log("Required fields validated ✅")
 
     // Validate payment information
@@ -174,7 +183,6 @@ export async function submitItem(formData: FormData) {
     if (urgent) enhancedDescription += `\n⚡ URGENT SALE`
 
     // If user provided a suggested category name (useful when categories couldn't load), append to description
-    const suggestedCategory = formData.get("suggestedCategory") as string | null
     if (suggestedCategory) {
       enhancedDescription += `\n\nSuggested Category: ${suggestedCategory}`
       console.log("Appended suggested category to description:", suggestedCategory)

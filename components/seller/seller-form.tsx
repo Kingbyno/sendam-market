@@ -120,15 +120,19 @@ export function SellerForm({ categories }: { categories: CategoryWithChildren[] 
       return
     }
 
-    if (!categoryId) {
+    const suggestedCategory = formData.get("suggestedCategory") as string | null
+
+    if (!categoryId && !suggestedCategory) {
       toast({
         title: "Category Required",
-        description: "You must select a category for your item.",
+        description: "Select a category or type a suggestion if categories are unavailable.",
         variant: "destructive",
       })
       return
     }
-    formData.append("categoryId", categoryId)
+    if (categoryId) {
+      formData.append("categoryId", categoryId)
+    }
     formData.append("negotiable", String(negotiable))
     formData.append("urgent", String(urgent))
     formData.append("warranty", String(warranty))
@@ -249,6 +253,19 @@ export function SellerForm({ categories }: { categories: CategoryWithChildren[] 
             <p className="text-sm text-gray-500">
               Choose the most specific category that fits your item.
             </p>
+            {categories.length === 0 && (
+              <div className="space-y-2 mt-2">
+                <Label htmlFor="suggestedCategory">Suggest Category *</Label>
+                <Input
+                  id="suggestedCategory"
+                  name="suggestedCategory"
+                  placeholder="e.g., Vintage Collectibles"
+                />
+                <p className="text-xs text-muted-foreground">
+                  We’ll review and add your suggested category soon.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

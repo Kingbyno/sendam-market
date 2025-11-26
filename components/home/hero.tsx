@@ -13,14 +13,14 @@ export function Hero() {
                 The Secure Way to Buy & Sell Online
               </h1>
               <p className="max-w-[600px] text-muted-foreground md:text-xl leading-relaxed">
-                Sendam is a peer-to-peer marketplace with a built-in escrow service that protects both buyers and sellers from fraud.
+                Xendam is a peer-to-peer marketplace with a built-in escrow service that protects both buyers and sellers from fraud.
               </p>
             </div>
             <div className="flex flex-col gap-3 min-[400px]:flex-row">
               <Button 
                 asChild 
                 size="lg" 
-                className="btn-gradient text-base font-semibold px-8 py-6 hover:scale-105 active:scale-95 transition-transform duration-200"
+                className="btn-gradient rounded-full text-base font-semibold px-8 py-6 hover:scale-105 active:scale-95 transition-transform duration-200"
               >
                 <Link href="/marketplace">
                   Explore Marketplace
@@ -31,7 +31,7 @@ export function Hero() {
                 asChild 
                 variant="outline" 
                 size="lg"
-                className="glass border-border/50 hover:border-primary/50 text-base font-semibold px-8 py-6 hover:scale-105 active:scale-95 transition-all duration-200"
+                className="glass border-border/50 hover:border-primary/50 text-base rounded-full font-semibold px-8 py-6 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 <Link href="/sell">
                   Sell an Item
